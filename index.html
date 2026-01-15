@@ -18,23 +18,44 @@
   --text:#e5e7eb;
   --primary:#22c55e;
 }
-
 body{
   margin:0;
   font-family:system-ui;
   background:var(--bg);
   color:var(--text);
-  padding:20px;
+  padding:15px;
 }
 .container{max-width:420px;margin:auto}
 .card{
   background:var(--card);
-  padding:20px;
   border-radius:16px;
+  padding:18px;
   box-shadow:0 10px 25px rgba(0,0,0,.1);
-  margin-bottom:20px;
 }
 h1{text-align:center;margin:0 0 10px}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
+.tab{
+  flex:1;
+  padding:10px;
+  border-radius:10px;
+  text-align:center;
+  font-size:14px;
+  cursor:pointer;
+  background:#e5e7eb;
+}
+.tab.active{
+  background:var(--primary);
+  color:white;
+}
+
+.section{display:none}
+.section.active{display:block}
+
 button,input{
   width:100%;
   padding:14px;
@@ -43,11 +64,8 @@ button,input{
   margin-top:10px;
   font-size:15px;
 }
-button{
-  background:var(--primary);
-  color:white;
-  cursor:pointer;
-}
+button{background:var(--primary);color:white}
+
 .progress{
   height:12px;
   background:#e5e7eb;
@@ -68,81 +86,85 @@ table{
 th,td{
   font-size:13px;
   padding:6px;
-  text-align:center;
   border-bottom:1px solid #e5e7eb;
-}
-.toggle{
   text-align:center;
-  font-size:14px;
-  cursor:pointer;
 }
 canvas{width:100%;margin-top:10px}
+.toggle{
+  text-align:center;
+  font-size:13px;
+  margin-bottom:10px;
+  cursor:pointer;
+}
 .motivation{
   margin-top:10px;
+  font-style:italic;
   font-size:14px;
   text-align:center;
-  font-style:italic;
 }
 </style>
 </head>
 
 <body>
 <div class="container">
-
 <div class="card">
+
 <h1>Financial Freedom ID</h1>
 <div class="toggle" onclick="toggleMode()">🌙 Dark Mode</div>
 
-<input type="number" id="total" value="600000" readonly>
-<input type="number" value="25000" readonly>
-
-<button onclick="bayar()">Bayar Rp25.000 Hari Ini</button>
-
-<div id="info"></div>
-<div class="progress"><div class="progress-bar" id="bar"></div></div>
-<div class="motivation" id="motivasi"></div>
+<div class="tabs">
+  <div class="tab active" onclick="openTab('input')">Input</div>
+  <div class="tab" onclick="openTab('riwayat')">Riwayat</div>
+  <div class="tab" onclick="openTab('grafik')">Grafik</div>
 </div>
 
-<div class="card">
-<h3>Grafik Progres</h3>
-<canvas id="chart" height="120"></canvas>
+<!-- INPUT -->
+<div id="input" class="section active">
+  <input type="number" value="600000" readonly>
+  <input type="number" value="25000" readonly>
+  <button onclick="bayar()">Bayar Rp25.000 Hari Ini</button>
+
+  <div id="info"></div>
+  <div class="progress"><div class="progress-bar" id="bar"></div></div>
+  <div class="motivation" id="motivasi"></div>
 </div>
 
-<div class="card">
-<h3>Riwayat</h3>
-<table>
-<thead><tr><th>Tanggal</th><th>Bayar</th></tr></thead>
-<tbody id="riwayat"></tbody>
-</table>
+<!-- RIWAYAT -->
+<div id="riwayat" class="section">
+  <table>
+    <thead><tr><th>Tanggal</th><th>Bayar</th></tr></thead>
+    <tbody id="list"></tbody>
+  </table>
 </div>
 
+<!-- GRAFIK -->
+<div id="grafik" class="section">
+  <canvas id="chart" height="160"></canvas>
+</div>
+
+</div>
 </div>
 
 <script>
-const CICILAN = 25000;
-let data = JSON.parse(localStorage.getItem("ffData")) || [];
-let dark = localStorage.getItem("dark")==="1";
+const CICILAN=25000;
+let data=JSON.parse(localStorage.getItem("ffData"))||[];
+let dark=localStorage.getItem("dark")==="1";
 
 const motivasiList=[
-  "Satu langkah kecil hari ini, bebas besar besok.",
-  "Disiplin mengalahkan niat.",
-  "Uang dikendalikan, bukan mengendalikan.",
-  "Pelan tapi konsisten = menang.",
-  "Ini bukan soal cepat, ini soal selesai.",
+  "Disiplin kecil hari ini, bebas besar nanti.",
+  "Konsistensi mengalahkan motivasi.",
+  "Langkah kecil ini sedang mengubah hidupmu.",
   "Hari ini bayar, besok lebih ringan.",
-  "Kamu sedang menepati janji ke diri sendiri.",
-  "Bebas finansial dibangun, bukan diharap.",
-  "Langkah kecil ini sedang mengubah masa depanmu.",
-  "Tidak ada angsuran sia-sia."
+  "Bukan cepat, tapi selesai.",
+  "Uang sedang kamu kendalikan.",
+  "Pelan tapi pasti.",
+  "Janji ke diri sendiri sedang ditepati."
 ];
 
 function rupiah(n){return "Rp "+n.toLocaleString("id-ID")}
 
 function bayar(){
-  data.push({
-    tgl:new Date(),
-    bayar:CICILAN
-  });
+  data.push({tgl:new Date(),bayar:CICILAN});
   localStorage.setItem("ffData",JSON.stringify(data));
   render();
 }
@@ -153,23 +175,22 @@ function render(){
   let sisa=total-sum;
   let persen=Math.min(sum/total*100,100);
 
-  let hariSisa=Math.ceil(sisa/CICILAN);
-  let tglLunas=new Date();
-  tglLunas.setDate(tglLunas.getDate()+hariSisa);
+  let hari=Math.ceil(sisa/CICILAN);
+  let tgl=new Date(); tgl.setDate(tgl.getDate()+hari);
 
   info.innerHTML=`
     Terbayar: <b>${rupiah(sum)}</b><br>
     Sisa: <b>${rupiah(sisa)}</b><br>
-    Estimasi Lunas: <b>${tglLunas.toLocaleDateString("id-ID")}</b>
+    Estimasi Lunas: <b>${tgl.toLocaleDateString("id-ID")}</b>
   `;
   bar.style.width=persen+"%";
 
   motivasi.innerText=
     motivasiList[Math.floor(Math.random()*motivasiList.length)];
 
-  riwayat.innerHTML="";
+  list.innerHTML="";
   data.forEach(d=>{
-    riwayat.innerHTML+=`
+    list.innerHTML+=`
     <tr><td>${new Date(d.tgl).toLocaleDateString("id-ID")}</td>
     <td>${rupiah(d.bayar)}</td></tr>`;
   });
@@ -178,25 +199,27 @@ function render(){
 }
 
 function drawChart(){
-  let c=document.getElementById("chart");
-  let ctx=c.getContext("2d");
+  let c=chart,ctx=c.getContext("2d");
   ctx.clearRect(0,0,c.width,c.height);
-
-  let sum=0;
-  let step=c.width/(data.length||1);
+  let sum=0,step=c.width/(data.length||1);
 
   ctx.beginPath();
   ctx.strokeStyle="#22c55e";
   ctx.lineWidth=3;
-
   data.forEach((d,i)=>{
     sum+=d.bayar;
     let x=i*step;
     let y=c.height-(sum/600000)*c.height;
-    if(i===0)ctx.moveTo(x,y);
-    else ctx.lineTo(x,y);
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
   });
   ctx.stroke();
+}
+
+function openTab(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  event.target.classList.add("active");
 }
 
 function toggleMode(){
