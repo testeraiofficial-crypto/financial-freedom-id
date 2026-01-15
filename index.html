@@ -2,90 +2,211 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Catatan Angsuran Hutang</title>
+<title>Financial Freedom ID</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-body {
-  font-family: Arial, sans-serif;
-  max-width: 420px;
-  margin: auto;
-  padding: 20px;
+:root{
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --text:#0f172a;
+  --primary:#16a34a;
 }
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
+.dark{
+  --bg:#020617;
+  --card:#0f172a;
+  --text:#e5e7eb;
+  --primary:#22c55e;
 }
-table {
-  width: 100%;
-  margin-top: 15px;
-  border-collapse: collapse;
+
+body{
+  margin:0;
+  font-family:system-ui;
+  background:var(--bg);
+  color:var(--text);
+  padding:20px;
 }
-th, td {
-  border: 1px solid #ccc;
-  padding: 6px;
-  text-align: center;
+.container{max-width:420px;margin:auto}
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+  margin-bottom:20px;
+}
+h1{text-align:center;margin:0 0 10px}
+button,input{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:none;
+  margin-top:10px;
+  font-size:15px;
+}
+button{
+  background:var(--primary);
+  color:white;
+  cursor:pointer;
+}
+.progress{
+  height:12px;
+  background:#e5e7eb;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:10px;
+}
+.progress-bar{
+  height:100%;
+  background:var(--primary);
+  width:0%;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+th,td{
+  font-size:13px;
+  padding:6px;
+  text-align:center;
+  border-bottom:1px solid #e5e7eb;
+}
+.toggle{
+  text-align:center;
+  font-size:14px;
+  cursor:pointer;
+}
+canvas{width:100%;margin-top:10px}
+.motivation{
+  margin-top:10px;
+  font-size:14px;
+  text-align:center;
+  font-style:italic;
 }
 </style>
 </head>
+
 <body>
+<div class="container">
 
-<h2>Catatan Angsuran Hutang</h2>
+<div class="card">
+<h1>Financial Freedom ID</h1>
+<div class="toggle" onclick="toggleMode()">🌙 Dark Mode</div>
 
-<label>Total Hutang (Rp)</label>
-<input type="number" id="total" value="600000">
+<input type="number" id="total" value="600000" readonly>
+<input type="number" value="25000" readonly>
 
-<label>Angsuran Hari Ini (Rp)</label>
-<input type="number" id="bayar" placeholder="contoh: 25000">
+<button onclick="bayar()">Bayar Rp25.000 Hari Ini</button>
 
-<button onclick="tambah()">Tambah Angsuran</button>
+<div id="info"></div>
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+<div class="motivation" id="motivasi"></div>
+</div>
 
-<h3 id="sisa"></h3>
+<div class="card">
+<h3>Grafik Progres</h3>
+<canvas id="chart" height="120"></canvas>
+</div>
 
+<div class="card">
+<h3>Riwayat</h3>
 <table>
-<thead>
-<tr>
-<th>Tanggal</th>
-<th>Bayar</th>
-</tr>
-</thead>
+<thead><tr><th>Tanggal</th><th>Bayar</th></tr></thead>
 <tbody id="riwayat"></tbody>
 </table>
+</div>
+
+</div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("angsuran")) || [];
+const CICILAN = 25000;
+let data = JSON.parse(localStorage.getItem("ffData")) || [];
+let dark = localStorage.getItem("dark")==="1";
 
-function tambah() {
-  let bayar = Number(document.getElementById("bayar").value);
-  if (!bayar) return alert("Isi nominal dulu");
+const motivasiList=[
+  "Satu langkah kecil hari ini, bebas besar besok.",
+  "Disiplin mengalahkan niat.",
+  "Uang dikendalikan, bukan mengendalikan.",
+  "Pelan tapi konsisten = menang.",
+  "Ini bukan soal cepat, ini soal selesai.",
+  "Hari ini bayar, besok lebih ringan.",
+  "Kamu sedang menepati janji ke diri sendiri.",
+  "Bebas finansial dibangun, bukan diharap.",
+  "Langkah kecil ini sedang mengubah masa depanmu.",
+  "Tidak ada angsuran sia-sia."
+];
 
+function rupiah(n){return "Rp "+n.toLocaleString("id-ID")}
+
+function bayar(){
   data.push({
-    tgl: new Date().toLocaleDateString("id-ID"),
-    bayar: bayar
+    tgl:new Date(),
+    bayar:CICILAN
   });
-
-  localStorage.setItem("angsuran", JSON.stringify(data));
-  document.getElementById("bayar").value = "";
+  localStorage.setItem("ffData",JSON.stringify(data));
   render();
 }
 
-function render() {
-  let total = Number(document.getElementById("total").value);
-  let tbody = document.getElementById("riwayat");
-  tbody.innerHTML = "";
+function render(){
+  let total=600000;
+  let sum=data.reduce((a,b)=>a+b.bayar,0);
+  let sisa=total-sum;
+  let persen=Math.min(sum/total*100,100);
 
-  let sum = 0;
-  data.forEach(d => {
-    sum += d.bayar;
-    tbody.innerHTML += `<tr><td>${d.tgl}</td><td>Rp ${d.bayar.toLocaleString("id-ID")}</td></tr>`;
+  let hariSisa=Math.ceil(sisa/CICILAN);
+  let tglLunas=new Date();
+  tglLunas.setDate(tglLunas.getDate()+hariSisa);
+
+  info.innerHTML=`
+    Terbayar: <b>${rupiah(sum)}</b><br>
+    Sisa: <b>${rupiah(sisa)}</b><br>
+    Estimasi Lunas: <b>${tglLunas.toLocaleDateString("id-ID")}</b>
+  `;
+  bar.style.width=persen+"%";
+
+  motivasi.innerText=
+    motivasiList[Math.floor(Math.random()*motivasiList.length)];
+
+  riwayat.innerHTML="";
+  data.forEach(d=>{
+    riwayat.innerHTML+=`
+    <tr><td>${new Date(d.tgl).toLocaleDateString("id-ID")}</td>
+    <td>${rupiah(d.bayar)}</td></tr>`;
   });
 
-  let sisa = total - sum;
-  document.getElementById("sisa").innerText =
-    "Sisa Hutang: Rp " + sisa.toLocaleString("id-ID");
+  drawChart();
 }
 
+function drawChart(){
+  let c=document.getElementById("chart");
+  let ctx=c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
+
+  let sum=0;
+  let step=c.width/(data.length||1);
+
+  ctx.beginPath();
+  ctx.strokeStyle="#22c55e";
+  ctx.lineWidth=3;
+
+  data.forEach((d,i)=>{
+    sum+=d.bayar;
+    let x=i*step;
+    let y=c.height-(sum/600000)*c.height;
+    if(i===0)ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+}
+
+function toggleMode(){
+  dark=!dark;
+  document.body.classList.toggle("dark",dark);
+  localStorage.setItem("dark",dark?"1":"0");
+}
+
+if(dark)document.body.classList.add("dark");
 render();
 </script>
-
 </body>
 </html>
