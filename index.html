@@ -7,77 +7,138 @@
 
 <style>
 :root{
-  --bg:#f8fafc;
+  --bg: linear-gradient(180deg,#e0f2fe,#f8fafc);
   --card:#ffffff;
   --text:#0f172a;
-  --primary:#16a34a;
+  --primary:#38bdf8;
+  --secondary:#0ea5e9;
 }
 .dark{
-  --bg:#020617;
+  --bg: linear-gradient(180deg,#020617,#020617);
   --card:#0f172a;
   --text:#e5e7eb;
-  --primary:#22c55e;
+  --primary:#38bdf8;
+  --secondary:#0ea5e9;
 }
+
 body{
   margin:0;
   font-family:system-ui;
   background:var(--bg);
   color:var(--text);
-  padding:15px;
+  padding:16px;
 }
 .container{max-width:420px;margin:auto}
 .card{
   background:var(--card);
-  border-radius:16px;
-  padding:18px;
-  box-shadow:0 10px 25px rgba(0,0,0,.1);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 15px 35px rgba(0,0,0,.12);
 }
-h1{text-align:center;margin:0 0 10px}
+
+h1{
+  text-align:center;
+  margin:0 0 14px;
+  font-size:22px;
+}
+
+.toggle{
+  text-align:center;
+  font-size:13px;
+  cursor:pointer;
+  margin-bottom:14px;
+  opacity:.8;
+}
 
 .tabs{
   display:flex;
   gap:8px;
-  margin-bottom:12px;
+  margin-bottom:14px;
 }
 .tab{
   flex:1;
   padding:10px;
-  border-radius:10px;
+  border-radius:12px;
   text-align:center;
   font-size:14px;
+  background:#e0f2fe;
   cursor:pointer;
-  background:#e5e7eb;
 }
 .tab.active{
-  background:var(--primary);
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
   color:white;
 }
 
 .section{display:none}
 .section.active{display:block}
 
-button,input{
+/* FORM */
+.form-group{
+  display:flex;
+  gap:10px;
+  margin-bottom:12px;
+}
+.form-box{
+  flex:1;
+  background:#f1f5f9;
+  border-radius:14px;
+  padding:10px 12px;
+  text-align:center;
+}
+.form-box label{
+  font-size:12px;
+  opacity:.6;
+}
+.form-box input{
+  border:none;
+  background:none;
+  font-size:16px;
+  font-weight:600;
+  text-align:center;
+  width:100%;
+  margin-top:4px;
+  color:inherit;
+}
+
+button{
   width:100%;
   padding:14px;
-  border-radius:12px;
   border:none;
-  margin-top:10px;
-  font-size:15px;
+  border-radius:16px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  margin-top:6px;
 }
-button{background:var(--primary);color:white}
 
 .progress{
   height:12px;
   background:#e5e7eb;
   border-radius:10px;
   overflow:hidden;
-  margin-top:10px;
+  margin-top:14px;
 }
 .progress-bar{
   height:100%;
-  background:var(--primary);
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
   width:0%;
 }
+
+.info{
+  margin-top:12px;
+  font-size:14px;
+  text-align:center;
+}
+
+.motivation{
+  margin-top:10px;
+  font-size:14px;
+  font-style:italic;
+  text-align:center;
+  opacity:.85;
+}
+
 table{
   width:100%;
   border-collapse:collapse;
@@ -86,22 +147,10 @@ table{
 th,td{
   font-size:13px;
   padding:6px;
-  border-bottom:1px solid #e5e7eb;
   text-align:center;
+  border-bottom:1px solid #e5e7eb;
 }
 canvas{width:100%;margin-top:10px}
-.toggle{
-  text-align:center;
-  font-size:13px;
-  margin-bottom:10px;
-  cursor:pointer;
-}
-.motivation{
-  margin-top:10px;
-  font-style:italic;
-  font-size:14px;
-  text-align:center;
-}
 </style>
 </head>
 
@@ -120,11 +169,20 @@ canvas{width:100%;margin-top:10px}
 
 <!-- INPUT -->
 <div id="input" class="section active">
-  <input type="number" value="600000" readonly>
-  <input type="number" value="25000" readonly>
+  <div class="form-group">
+    <div class="form-box">
+      <label>Total Hutang</label>
+      <input value="Rp 600.000" readonly>
+    </div>
+    <div class="form-box">
+      <label>Cicilan / Hari</label>
+      <input value="Rp 25.000" readonly>
+    </div>
+  </div>
+
   <button onclick="bayar()">Bayar Rp25.000 Hari Ini</button>
 
-  <div id="info"></div>
+  <div class="info" id="info"></div>
   <div class="progress"><div class="progress-bar" id="bar"></div></div>
   <div class="motivation" id="motivasi"></div>
 </div>
@@ -146,19 +204,19 @@ canvas{width:100%;margin-top:10px}
 </div>
 
 <script>
+const TOTAL=600000;
 const CICILAN=25000;
 let data=JSON.parse(localStorage.getItem("ffData"))||[];
 let dark=localStorage.getItem("dark")==="1";
 
 const motivasiList=[
-  "Disiplin kecil hari ini, bebas besar nanti.",
-  "Konsistensi mengalahkan motivasi.",
-  "Langkah kecil ini sedang mengubah hidupmu.",
-  "Hari ini bayar, besok lebih ringan.",
-  "Bukan cepat, tapi selesai.",
-  "Uang sedang kamu kendalikan.",
-  "Pelan tapi pasti.",
-  "Janji ke diri sendiri sedang ditepati."
+  "Tenang, kamu sedang bergerak ke arah yang benar.",
+  "Disiplin kecil hari ini menciptakan kebebasan besar.",
+  "Keuangan rapi, pikiran ikut damai.",
+  "Pelan tapi konsisten selalu menang.",
+  "Setiap pembayaran adalah bentuk sayang ke diri sendiri.",
+  "Tidak perlu sempurna, cukup konsisten.",
+  "Langkah kecil ini sedang menenangkan masa depanmu."
 ];
 
 function rupiah(n){return "Rp "+n.toLocaleString("id-ID")}
@@ -170,18 +228,16 @@ function bayar(){
 }
 
 function render(){
-  let total=600000;
   let sum=data.reduce((a,b)=>a+b.bayar,0);
-  let sisa=total-sum;
-  let persen=Math.min(sum/total*100,100);
-
+  let sisa=TOTAL-sum;
+  let persen=Math.min(sum/TOTAL*100,100);
   let hari=Math.ceil(sisa/CICILAN);
   let tgl=new Date(); tgl.setDate(tgl.getDate()+hari);
 
   info.innerHTML=`
-    Terbayar: <b>${rupiah(sum)}</b><br>
-    Sisa: <b>${rupiah(sisa)}</b><br>
-    Estimasi Lunas: <b>${tgl.toLocaleDateString("id-ID")}</b>
+    Terbayar <b>${rupiah(sum)}</b><br>
+    Sisa <b>${rupiah(sisa)}</b><br>
+    Estimasi lunas <b>${tgl.toLocaleDateString("id-ID")}</b>
   `;
   bar.style.width=persen+"%";
 
@@ -204,12 +260,12 @@ function drawChart(){
   let sum=0,step=c.width/(data.length||1);
 
   ctx.beginPath();
-  ctx.strokeStyle="#22c55e";
+  ctx.strokeStyle="#38bdf8";
   ctx.lineWidth=3;
   data.forEach((d,i)=>{
     sum+=d.bayar;
     let x=i*step;
-    let y=c.height-(sum/600000)*c.height;
+    let y=c.height-(sum/TOTAL)*c.height;
     i?ctx.lineTo(x,y):ctx.moveTo(x,y);
   });
   ctx.stroke();
