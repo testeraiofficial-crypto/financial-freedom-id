@@ -1,291 +1,170 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Financial Freedom ID</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-:root{
-  --bg: linear-gradient(180deg,#e0f2fe,#f8fafc);
-  --card:#ffffff;
-  --text:#0f172a;
-  --primary:#38bdf8;
-  --secondary:#0ea5e9;
-}
-.dark{
-  --bg: linear-gradient(180deg,#020617,#020617);
-  --card:#0f172a;
-  --text:#e5e7eb;
-  --primary:#38bdf8;
-  --secondary:#0ea5e9;
-}
-
-body{
-  margin:0;
-  font-family:system-ui;
-  background:var(--bg);
-  color:var(--text);
-  padding:16px;
-}
-.container{max-width:420px;margin:auto}
-.card{
-  background:var(--card);
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 15px 35px rgba(0,0,0,.12);
-}
-
-h1{
-  text-align:center;
-  margin:0 0 14px;
-  font-size:22px;
-}
-
-.toggle{
-  text-align:center;
-  font-size:13px;
-  cursor:pointer;
-  margin-bottom:14px;
-  opacity:.8;
-}
-
-.tabs{
-  display:flex;
-  gap:8px;
-  margin-bottom:14px;
-}
-.tab{
-  flex:1;
-  padding:10px;
-  border-radius:12px;
-  text-align:center;
-  font-size:14px;
-  background:#e0f2fe;
-  cursor:pointer;
-}
-.tab.active{
-  background:linear-gradient(135deg,var(--primary),var(--secondary));
-  color:white;
-}
-
-.section{display:none}
-.section.active{display:block}
-
-/* FORM */
-.form-group{
-  display:flex;
-  gap:10px;
-  margin-bottom:12px;
-}
-.form-box{
-  flex:1;
-  background:#f1f5f9;
-  border-radius:14px;
-  padding:10px 12px;
-  text-align:center;
-}
-.form-box label{
-  font-size:12px;
-  opacity:.6;
-}
-.form-box input{
-  border:none;
-  background:none;
-  font-size:16px;
-  font-weight:600;
-  text-align:center;
-  width:100%;
-  margin-top:4px;
-  color:inherit;
-}
-
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:16px;
-  background:linear-gradient(135deg,var(--primary),var(--secondary));
-  color:white;
-  font-size:16px;
-  cursor:pointer;
-  margin-top:6px;
-}
-
-.progress{
-  height:12px;
-  background:#e5e7eb;
-  border-radius:10px;
-  overflow:hidden;
-  margin-top:14px;
-}
-.progress-bar{
-  height:100%;
-  background:linear-gradient(135deg,var(--primary),var(--secondary));
-  width:0%;
-}
-
-.info{
-  margin-top:12px;
-  font-size:14px;
-  text-align:center;
-}
-
-.motivation{
-  margin-top:10px;
-  font-size:14px;
-  font-style:italic;
-  text-align:center;
-  opacity:.85;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
-}
-th,td{
-  font-size:13px;
-  padding:6px;
-  text-align:center;
-  border-bottom:1px solid #e5e7eb;
-}
-canvas{width:100%;margin-top:10px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Financial Freedom ID</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f2f6fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #fff;
+      width: 360px;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .tab {
+      flex: 1;
+      padding: 8px;
+      border-radius: 20px;
+      background: #e8f3ff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .tab.active {
+      background: #2bb0f3;
+      color: #fff;
+    }
+    .box {
+      background: #f5f7fa;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .box strong {
+      display: block;
+      font-size: 16px;
+      margin-top: 4px;
+    }
+    .pay {
+      background: #2bb0f3;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px 0;
+    }
+    .progress {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .progress-bar {
+      height: 100%;
+      background: #2bb0f3;
+      width: 0%;
+    }
+    .note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 8px;
+      font-style: italic;
+    }
+  </style>
 </head>
-
 <body>
-<div class="container">
-<div class="card">
+  <div class="card">
+    <h1>Financial Freedom ID</h1>
+    <div style="font-size:12px">🌙 Dark Mode</div>
 
-<h1>Financial Freedom ID</h1>
-<div class="toggle" onclick="toggleMode()">🌙 Dark Mode</div>
-
-<div class="tabs">
-  <div class="tab active" onclick="openTab('input')">Input</div>
-  <div class="tab" onclick="openTab('riwayat')">Riwayat</div>
-  <div class="tab" onclick="openTab('grafik')">Grafik</div>
-</div>
-
-<!-- INPUT -->
-<div id="input" class="section active">
-  <div class="form-group">
-    <div class="form-box">
-      <label>Total Hutang</label>
-      <input value="Rp 600.000" readonly>
+    <div class="tabs">
+      <div class="tab active">Input</div>
+      <div class="tab">Riwayat</div>
+      <div class="tab">Grafik</div>
     </div>
-    <div class="form-box">
-      <label>Cicilan / Hari</label>
-      <input value="Rp 25.000" readonly>
+
+    <div class="box">
+      Total Hutang
+      <strong id="total">Rp 500.000</strong>
     </div>
+    <div class="box">
+      Cicilan / Hari
+      <strong>Rp 25.000</strong>
+    </div>
+
+    <button class="pay" onclick="bayar()">Bayar Rp25.000 Hari Ini</button>
+
+    <div style="font-size:14px" id="info"></div>
+    <div id="motivasi" style="margin-top:8px;font-size:13px;font-weight:600;color:#0ea5e9"></div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <div class="note">Tenang, kamu sedang bergerak ke arah yang benar.</div>
   </div>
 
-  <button onclick="bayar()">Bayar Rp25.000 Hari Ini</button>
-
-  <div class="info" id="info"></div>
-  <div class="progress"><div class="progress-bar" id="bar"></div></div>
-  <div class="motivation" id="motivasi"></div>
-</div>
-
-<!-- RIWAYAT -->
-<div id="riwayat" class="section">
-  <table>
-    <thead><tr><th>Tanggal</th><th>Bayar</th></tr></thead>
-    <tbody id="list"></tbody>
-  </table>
-</div>
-
-<!-- GRAFIK -->
-<div id="grafik" class="section">
-  <canvas id="chart" height="160"></canvas>
-</div>
-
-</div>
-</div>
-
 <script>
-const TOTAL=600000;
-const CICILAN=25000;
-let data=JSON.parse(localStorage.getItem("ffData"))||[];
-let dark=localStorage.getItem("dark")==="1";
+  const TOTAL = 500000;
+  const CICILAN = 25000;
+  const START_DATE = new Date('2026-02-01');
 
-const motivasiList=[
-  "Tenang, kamu sedang bergerak ke arah yang benar.",
-  "Disiplin kecil hari ini menciptakan kebebasan besar.",
-  "Keuangan rapi, pikiran ikut damai.",
-  "Pelan tapi konsisten selalu menang.",
-  "Setiap pembayaran adalah bentuk sayang ke diri sendiri.",
-  "Tidak perlu sempurna, cukup konsisten.",
-  "Langkah kecil ini sedang menenangkan masa depanmu."
-];
+  let paid = JSON.parse(localStorage.getItem('paid')) || 0;
 
-function rupiah(n){return "Rp "+n.toLocaleString("id-ID")}
+  function update() {
+    const sisa = TOTAL - paid;
+    document.getElementById('total').innerText = 'Rp ' + sisa.toLocaleString('id-ID');
+    document.getElementById('info').innerHTML = `Terbayar Rp ${paid.toLocaleString('id-ID')}<br>Sisa Rp ${sisa.toLocaleString('id-ID')}<br>Estimasi lunas ${estimasiLunas()}`;
+    document.getElementById('progress').style.width = (paid / TOTAL * 100) + '%';
+  }
 
-function bayar(){
-  data.push({tgl:new Date(),bayar:CICILAN});
-  localStorage.setItem("ffData",JSON.stringify(data));
-  render();
-}
+  function bayar() {
+    if (paid >= TOTAL) return alert('Hutang sudah lunas 🎉');
+    paid += CICILAN;
+    if (paid > TOTAL) paid = TOTAL;
+    localStorage.setItem('paid', JSON.stringify(paid));
+    tampilkanMotivasi();
+    update();
 
-function render(){
-  let sum=data.reduce((a,b)=>a+b.bayar,0);
-  let sisa=TOTAL-sum;
-  let persen=Math.min(sum/TOTAL*100,100);
-  let hari=Math.ceil(sisa/CICILAN);
-  let tgl=new Date(); tgl.setDate(tgl.getDate()+hari);
+  const kataMotivasi = [
+    'Mantap! Satu langkah kecil hari ini adalah kebebasan besar di masa depan 💪',
+    'Disiplinmu hari ini sedang membangun versi dirimu yang lebih tenang 😌',
+    'Setiap angsuran = satu beban hidup dilepaskan 🔓',
+    'Kamu tidak menunda. Kamu menang hari ini 🏆',
+    'Otakmu suka ini. Progres nyata memberi rasa lega 🧠✨',
+    'Ini bukan soal uang, ini soal kendali diri 🔥',
+    'Sedikit tapi konsisten = hasil besar 🚀',
+    'Hari ini kamu lebih kuat dari kemarin 💙'
+  ];
 
-  info.innerHTML=`
-    Terbayar <b>${rupiah(sum)}</b><br>
-    Sisa <b>${rupiah(sisa)}</b><br>
-    Estimasi lunas <b>${tgl.toLocaleDateString("id-ID")}</b>
-  `;
-  bar.style.width=persen+"%";
+  function tampilkanMotivasi() {
+    const teks = kataMotivasi[Math.floor(Math.random() * kataMotivasi.length)];
+    document.getElementById('motivasi').innerText = teks;
+  }
 
-  motivasi.innerText=
-    motivasiList[Math.floor(Math.random()*motivasiList.length)];
+  }
 
-  list.innerHTML="";
-  data.forEach(d=>{
-    list.innerHTML+=`
-    <tr><td>${new Date(d.tgl).toLocaleDateString("id-ID")}</td>
-    <td>${rupiah(d.bayar)}</td></tr>`;
-  });
+  function estimasiLunas() {
+    const hari = Math.ceil((TOTAL - paid) / CICILAN);
+    const d = new Date();
+    d.setDate(d.getDate() + hari);
+    return d.toLocaleDateString('id-ID');
+  }
 
-  drawChart();
-}
-
-function drawChart(){
-  let c=chart,ctx=c.getContext("2d");
-  ctx.clearRect(0,0,c.width,c.height);
-  let sum=0,step=c.width/(data.length||1);
-
-  ctx.beginPath();
-  ctx.strokeStyle="#38bdf8";
-  ctx.lineWidth=3;
-  data.forEach((d,i)=>{
-    sum+=d.bayar;
-    let x=i*step;
-    let y=c.height-(sum/TOTAL)*c.height;
-    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
-  });
-  ctx.stroke();
-}
-
-function openTab(id){
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  event.target.classList.add("active");
-}
-
-function toggleMode(){
-  dark=!dark;
-  document.body.classList.toggle("dark",dark);
-  localStorage.setItem("dark",dark?"1":"0");
-}
-
-if(dark)document.body.classList.add("dark");
-render();
+  update();
 </script>
 </body>
 </html>
