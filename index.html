@@ -3,257 +3,158 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Financial Freedom ID</title>
+  <title>Pencatat Angsuran Hutang</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    :root {
+      --bg: #f4f4f4;
+      --text: #222;
+      --card: #fff;
+    }
+    body.dark {
+      --bg: #121212;
+      --text: #eee;
+      --card: #1e1e1e;
+    }
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f2f6fb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
     }
     .card {
-      background: #fff;
-      width: 360px;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      text-align: center;
+      background: var(--card);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    h1 {
-      font-size: 20px;
-      margin-bottom: 4px;
-    }
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin: 16px 0;
-    }
-    .tab {
-      flex: 1;
-      padding: 8px;
-      border-radius: 20px;
-      background: #e8f3ff;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .tab.active {
-      background: #2bb0f3;
-      color: #fff;
-    }
-    .box {
-      background: #f5f7fa;
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-    .box strong {
-      display: block;
-      font-size: 16px;
-      margin-top: 4px;
-    }
-    .pay {
-      background: #2bb0f3;
-      color: #fff;
+    button {
+      padding: 10px 16px;
       border: none;
-      border-radius: 20px;
-      padding: 12px;
-      width: 100%;
-      font-size: 16px;
-      cursor: pointer;
-      margin: 10px 0;
-    }
-    .progress {
-      height: 8px;
-      background: #e5e7eb;
       border-radius: 8px;
-      overflow: hidden;
-      margin: 10px 0;
+      cursor: pointer;
+      font-size: 16px;
     }
-    .progress-bar {
-      height: 100%;
-      background: #2bb0f3;
-      width: 0%;
+    .btn-primary { background: #4caf50; color: #fff; }
+    .btn-secondary { background: #2196f3; color: #fff; }
+    .btn-dark { background: #555; color: #fff; }
+
+    /* Gemerlap animation */
+    .sparkle {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: gold;
+      border-radius: 50%;
+      animation: sparkle 1s ease-out forwards;
+      pointer-events: none;
     }
-    .note {
-      font-size: 12px;
-      color: #6b7280;
-      margin-top: 8px;
-      font-style: italic;
+    @keyframes sparkle {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(3) translateY(-80px); opacity: 0; }
     }
   </style>
 </head>
-<body id="body">
+<body>
+  <h1>📒 Pencatat Angsuran Hutang</h1>
+
   <div class="card">
-    <h1>Financial Freedom ID</h1>
-    <div style="font-size:12px;cursor:pointer" onclick="toggleDark()">🌙 Dark Mode</div>
-
-    <div class="tabs">
-      <div class="tab active" onclick="showTab('input')">Input</div>
-      <div class="tab" onclick="showTab('riwayat')">Riwayat</div>
-      <div class="tab" onclick="showTab('grafik')">Grafik</div>
-    </div>
-      <div class="tab">Riwayat</div>
-      <div class="tab">Grafik</div>
-    </div>
-
-    <div class="box">
-      Total Hutang
-      <strong id="total">Rp 500.000</strong>
-    </div>
-    <div class="box">
-      Cicilan / Hari
-      <strong>Rp 25.000</strong>
-    </div>
-
-    <div id="tab-input">
-    <button class="pay" onclick="bayar()">Bayar Rp25.000 Hari Ini</button>
-
-    <div style="font-size:14px" id="info"></div>
-    <div id="motivasi" style="margin-top:8px;font-size:13px;font-weight:600;color:#0ea5e9"></div>
-
-    <div class="progress">
-      <div class="progress-bar" id="progress"></div>
-    </div>
-
-    <div id="badge" style="margin-top:12px"></div>
-    <div class="note">Tenang, kamu sedang bergerak ke arah yang benar.</div>
-    </div>
-
-    <div id="tab-riwayat" style="display:none;font-size:14px;text-align:left">
-      <h3>Riwayat Pembayaran</h3>
-      <div id="riwayat"></div>
-    </div>
-
-    <div id="tab-grafik" style="display:none">
-      <h3>Grafik Progres</h3>
-      <canvas id="grafik" width="300" height="120"></canvas>
-    </div>
+    <p><strong>Nilai Hutang Awal:</strong> Rp500.000</p>
+    <p><strong>Angsuran Harian:</strong> Rp25.000</p>
+    <p id="saldo"></p>
+    <p id="estimasi"></p>
+    <button class="btn-primary" onclick="angsuran()">Bayar Angsuran</button>
+    <button class="btn-dark" onclick="toggleDark()">Dark Mode</button>
   </div>
 
-<script>
-  const TOTAL = 500000;
-  const history = JSON.parse(localStorage.getItem('history')) || [];
-  const CICILAN = 25000;
-  const START_DATE = new Date('2026-02-01');
+  <div class="card">
+    <h3>📜 Riwayat Angsuran</h3>
+    <ul id="riwayat"></ul>
+  </div>
 
-  let paid = JSON.parse(localStorage.getItem('paid')) || 0;
-  let dark = JSON.parse(localStorage.getItem('dark')) || false;(localStorage.getItem('paid')) || 0;
+  <div class="card">
+    <h3>📊 Grafik Angsuran</h3>
+    <canvas id="chart"></canvas>
+  </div>
 
-  function update() {
-    const sisa = TOTAL - paid;
-    document.getElementById('total').innerText = 'Rp ' + sisa.toLocaleString('id-ID');
-    document.getElementById('info').innerHTML = `Terbayar Rp ${paid.toLocaleString('id-ID')}<br>Sisa Rp ${sisa.toLocaleString('id-ID')}<br>Estimasi lunas ${estimasiLunas()}`;
-    document.getElementById('progress').style.width = (paid / TOTAL * 100) + '%';
-  }
+  <script>
+    const hutangAwal = 500000;
+    const angsuranHarian = 25000;
+    const mulai = new Date('2026-02-01');
 
-  function bayar() {
-    if (paid >= TOTAL) return alert('Hutang sudah lunas 🎉');
-    paid += CICILAN;
-    if (paid > TOTAL) paid = TOTAL;
-    history.push({ tanggal: new Date().toLocaleDateString('id-ID'), jumlah: CICILAN });
-    localStorage.setItem('history', JSON.stringify(history));
-    localStorage.setItem('paid', JSON.stringify(paid));
-    tampilkanMotivasi();
-    renderRiwayat();
-    renderGrafik();
-    cekBadge();
-    update();
-  renderRiwayat();
-  renderGrafik();
-  applyDark();
-    cekBadge();
+    let data = JSON.parse(localStorage.getItem('angsuran')) || [];
 
-  function toggleDark(){
-    dark = !dark;
-    localStorage.setItem('dark', JSON.stringify(dark));
-    applyDark();
-  }
-
-  function applyDark(){
-    document.body.style.background = dark ? '#020617' : '#f2f6fb';
-    const card = document.querySelector('.card');
-    card.style.background = dark ? '#020617' : '#fff';
-    card.style.color = dark ? '#e5e7eb' : '#000';
-  }
-
-  function showTab(tab){
-    ['input','riwayat','grafik'].forEach(t=>{
-      document.getElementById('tab-'+t).style.display = t===tab ? 'block':'none';
-    });
-    document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
-    event.target.classList.add('active');
-  }
-
-  function renderRiwayat(){
-    let html = history.map(h => `• ${h.tanggal} : Rp ${h.jumlah.toLocaleString('id-ID')}`).join('<br>');
-    document.getElementById('riwayat').innerHTML = html || 'Belum ada pembayaran';
-  }
-
-  function renderGrafik(){
-    const canvas = document.getElementById('grafik');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    const step = canvas.width / TOTAL;
-    let x = 0;
-    history.forEach(h=>{
-      ctx.fillRect(x, canvas.height-20, step*h.jumlah, 20);
-      x += step*h.jumlah;
-    });
-  }
-
-  function cekBadge(){
-    const badgeDiv = document.getElementById('badge');
-    const hariUnik = [...new Set(history.map(h => h.tanggal))].length;
-    if(hariUnik >= 5){
-      badgeDiv.innerHTML = `
-        <div style="padding:14px;border-radius:16px;background:linear-gradient(135deg,#38bdf8,#22c55e,#facc15);color:#000;font-weight:700;animation:pulse 1.5s infinite">
-          🏆 BADGE DISIPLIN 5 HARI 🏆<br>
-          <span style="font-size:13px;font-weight:500">Otakmu SUKA konsistensi ini. Jangan berhenti 🔥</span>
-        </div>`;
-    } else {
-      badgeDiv.innerHTML = `
-        <div style="font-size:12px;color:#6b7280">Progress Badge: ${hariUnik}/5 hari disiplin</div>`;
+    function saldoSisa() {
+      return hutangAwal - data.length * angsuranHarian;
     }
-  }
-);
-  }
-  }() {
-    if (paid >= TOTAL) return alert('Hutang sudah lunas 🎉');
-    paid += CICILAN;
-    if (paid > TOTAL) paid = TOTAL;
-    localStorage.setItem('paid', JSON.stringify(paid));
-    tampilkanMotivasi();
-    update();
 
-  const kataMotivasi = [
-    'Mantap! Satu langkah kecil hari ini adalah kebebasan besar di masa depan 💪',
-    'Disiplinmu hari ini sedang membangun versi dirimu yang lebih tenang 😌',
-    'Setiap angsuran = satu beban hidup dilepaskan 🔓',
-    'Kamu tidak menunda. Kamu menang hari ini 🏆',
-    'Otakmu suka ini. Progres nyata memberi rasa lega 🧠✨',
-    'Ini bukan soal uang, ini soal kendali diri 🔥',
-    'Sedikit tapi konsisten = hasil besar 🚀',
-    'Hari ini kamu lebih kuat dari kemarin 💙'
-  ];
+    function estimasiLunas() {
+      const sisaHari = Math.ceil(saldoSisa() / angsuranHarian);
+      const tgl = new Date();
+      tgl.setDate(tgl.getDate() + sisaHari);
+      return tgl.toLocaleDateString('id-ID');
+    }
 
-  function tampilkanMotivasi() {
-    const teks = kataMotivasi[Math.floor(Math.random() * kataMotivasi.length)];
-    document.getElementById('motivasi').innerText = teks;
-  }
+    function updateInfo() {
+      document.getElementById('saldo').innerText = 'Sisa Hutang: Rp' + saldoSisa().toLocaleString('id-ID');
+      document.getElementById('estimasi').innerText = 'Estimasi Lunas: ' + estimasiLunas();
+    }
 
-  }
+    function angsuran() {
+      if (saldoSisa() <= 0) return alert('Hutang sudah lunas 🎉');
+      const tgl = new Date();
+      data.push({ tanggal: tgl.toISOString(), jumlah: angsuranHarian });
+      localStorage.setItem('angsuran', JSON.stringify(data));
+      sparkle();
+      renderRiwayat();
+      renderChart();
+      updateInfo();
+    }
 
-  function estimasiLunas() {
-    const hari = Math.ceil((TOTAL - paid) / CICILAN);
-    const d = new Date();
-    d.setDate(d.getDate() + hari);
-    return d.toLocaleDateString('id-ID');
-  }
+    function renderRiwayat() {
+      const ul = document.getElementById('riwayat');
+      ul.innerHTML = '';
+      data.forEach((d, i) => {
+        const li = document.createElement('li');
+        li.innerText = `${i+1}. ${new Date(d.tanggal).toLocaleDateString('id-ID')} - Rp25.000`;
+        ul.appendChild(li);
+      });
+    }
 
-  update();
-</script>
+    let chart;
+    function renderChart() {
+      const ctx = document.getElementById('chart');
+      const labels = data.map((_, i) => i+1);
+      const values = data.map((_, i) => hutangAwal - (i+1)*angsuranHarian);
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets: [{ data: values, fill: false }] },
+        options: { responsive: true }
+      });
+    }
+
+    function sparkle() {
+      for (let i = 0; i < 12; i++) {
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        s.style.left = Math.random()*window.innerWidth + 'px';
+        s.style.top = Math.random()*window.innerHeight + 'px';
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 1000);
+      }
+    }
+
+    function toggleDark() {
+      document.body.classList.toggle('dark');
+    }
+
+    renderRiwayat();
+    renderChart();
+    updateInfo();
+  </script>
 </body>
 </html>
