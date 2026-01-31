@@ -85,10 +85,10 @@
     }
   </style>
 </head>
-<body>
+<body id="body">
   <div class="card">
     <h1>Financial Freedom ID</h1>
-    <div style="font-size:12px">🌙 Dark Mode</div>
+    <div style="font-size:12px;cursor:pointer" onclick="toggleDark()">🌙 Dark Mode</div>
 
     <div class="tabs">
       <div class="tab active">Input</div>
@@ -114,15 +114,18 @@
       <div class="progress-bar" id="progress"></div>
     </div>
 
+    <div id="badge" style="margin-top:12px"></div>
     <div class="note">Tenang, kamu sedang bergerak ke arah yang benar.</div>
   </div>
 
 <script>
   const TOTAL = 500000;
+  const history = JSON.parse(localStorage.getItem('history')) || [];
   const CICILAN = 25000;
   const START_DATE = new Date('2026-02-01');
 
   let paid = JSON.parse(localStorage.getItem('paid')) || 0;
+  let dark = JSON.parse(localStorage.getItem('dark')) || false;(localStorage.getItem('paid')) || 0;
 
   function update() {
     const sisa = TOTAL - paid;
@@ -132,6 +135,68 @@
   }
 
   function bayar() {
+    if (paid >= TOTAL) return alert('Hutang sudah lunas 🎉');
+    paid += CICILAN;
+    if (paid > TOTAL) paid = TOTAL;
+    history.push({ tanggal: new Date().toLocaleDateString('id-ID'), jumlah: CICILAN });
+    localStorage.setItem('history', JSON.stringify(history));
+    localStorage.setItem('paid', JSON.stringify(paid));
+    tampilkanMotivasi();
+    renderRiwayat();
+    renderGrafik();
+    cekBadge();
+    update();
+  renderRiwayat();
+  renderGrafik();
+  applyDark();
+    cekBadge();
+
+  function toggleDark(){
+    dark = !dark;
+    localStorage.setItem('dark', JSON.stringify(dark));
+    applyDark();
+  }
+
+  function applyDark(){
+    document.body.style.background = dark ? '#0f172a' : '#f2f6fb';
+    document.querySelector('.card').style.background = dark ? '#020617' : '#fff';
+    document.querySelector('.card').style.color = dark ? '#e5e7eb' : '#000';
+  }
+
+  function renderRiwayat(){
+    let html = history.map(h => `• ${h.tanggal} : Rp ${h.jumlah.toLocaleString('id-ID')}`).join('<br>');
+    document.getElementById('riwayat').innerHTML = html || 'Belum ada pembayaran';
+  }
+
+  function renderGrafik(){
+    const canvas = document.getElementById('grafik');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const step = canvas.width / TOTAL;
+    let x = 0;
+    history.forEach(h=>{
+      ctx.fillRect(x, canvas.height-20, step*h.jumlah, 20);
+      x += step*h.jumlah;
+    });
+  }
+
+  function cekBadge(){
+    const badgeDiv = document.getElementById('badge');
+    const hariUnik = [...new Set(history.map(h => h.tanggal))].length;
+    if(hariUnik >= 5){
+      badgeDiv.innerHTML = `
+        <div style="padding:14px;border-radius:16px;background:linear-gradient(135deg,#38bdf8,#22c55e,#facc15);color:#000;font-weight:700;animation:pulse 1.5s infinite">
+          🏆 BADGE DISIPLIN 5 HARI 🏆<br>
+          <span style="font-size:13px;font-weight:500">Otakmu SUKA konsistensi ini. Jangan berhenti 🔥</span>
+        </div>`;
+    } else {
+      badgeDiv.innerHTML = `
+        <div style="font-size:12px;color:#6b7280">Progress Badge: ${hariUnik}/5 hari disiplin</div>`;
+    }
+  }
+);
+  }
+  }() {
     if (paid >= TOTAL) return alert('Hutang sudah lunas 🎉');
     paid += CICILAN;
     if (paid > TOTAL) paid = TOTAL;
