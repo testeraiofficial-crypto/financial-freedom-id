@@ -91,7 +91,10 @@
     <div style="font-size:12px;cursor:pointer" onclick="toggleDark()">🌙 Dark Mode</div>
 
     <div class="tabs">
-      <div class="tab active">Input</div>
+      <div class="tab active" onclick="showTab('input')">Input</div>
+      <div class="tab" onclick="showTab('riwayat')">Riwayat</div>
+      <div class="tab" onclick="showTab('grafik')">Grafik</div>
+    </div>
       <div class="tab">Riwayat</div>
       <div class="tab">Grafik</div>
     </div>
@@ -105,6 +108,7 @@
       <strong>Rp 25.000</strong>
     </div>
 
+    <div id="tab-input">
     <button class="pay" onclick="bayar()">Bayar Rp25.000 Hari Ini</button>
 
     <div style="font-size:14px" id="info"></div>
@@ -116,6 +120,17 @@
 
     <div id="badge" style="margin-top:12px"></div>
     <div class="note">Tenang, kamu sedang bergerak ke arah yang benar.</div>
+    </div>
+
+    <div id="tab-riwayat" style="display:none;font-size:14px;text-align:left">
+      <h3>Riwayat Pembayaran</h3>
+      <div id="riwayat"></div>
+    </div>
+
+    <div id="tab-grafik" style="display:none">
+      <h3>Grafik Progres</h3>
+      <canvas id="grafik" width="300" height="120"></canvas>
+    </div>
   </div>
 
 <script>
@@ -158,9 +173,18 @@
   }
 
   function applyDark(){
-    document.body.style.background = dark ? '#0f172a' : '#f2f6fb';
-    document.querySelector('.card').style.background = dark ? '#020617' : '#fff';
-    document.querySelector('.card').style.color = dark ? '#e5e7eb' : '#000';
+    document.body.style.background = dark ? '#020617' : '#f2f6fb';
+    const card = document.querySelector('.card');
+    card.style.background = dark ? '#020617' : '#fff';
+    card.style.color = dark ? '#e5e7eb' : '#000';
+  }
+
+  function showTab(tab){
+    ['input','riwayat','grafik'].forEach(t=>{
+      document.getElementById('tab-'+t).style.display = t===tab ? 'block':'none';
+    });
+    document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+    event.target.classList.add('active');
   }
 
   function renderRiwayat(){
