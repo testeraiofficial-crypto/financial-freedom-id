@@ -9,152 +9,139 @@
     :root {
       --bg: #f4f4f4;
       --text: #222;
-      --card: #fff;
+      --card: #ffffff;
+      --accent: linear-gradient(135deg,#ff6aa2,#7f7cff);
     }
     body.dark {
-      --bg: #121212;
+      --bg: #0f0f14;
       --text: #eee;
-      --card: #1e1e1e;
+      --card: #1b1b24;
     }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       padding: 20px;
-      transition: background 0.3s, color 0.3s;
+      transition: background .3s,color .3s;
     }
-    .card {
-      background: var(--card);
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .btn-primary { background: #4caf50; color: #fff; }
-    .btn-secondary { background: #2196f3; color: #fff; }
-    .btn-dark { background: #555; color: #fff; }
+    h1{font-size:20px;margin-bottom:16px}
 
-    /* Gemerlap animation */
-    .sparkle {
-      position: fixed;
-      width: 8px;
-      height: 8px;
-      background: gold;
-      border-radius: 50%;
-      animation: sparkle 1s ease-out forwards;
-      pointer-events: none;
+    /* layout */
+    .summary {
+      background: var(--accent);
+      color:#fff;
+      border-radius:20px;
+      padding:20px;
+      margin-bottom:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.15);
     }
-    @keyframes sparkle {
-      from { transform: scale(1); opacity: 1; }
-      to { transform: scale(3) translateY(-80px); opacity: 0; }
+    .summary .saldo{
+      font-size:26px;
+      font-weight:700;
+      margin:8px 0;
     }
+    .summary .sub{opacity:.9;font-size:13px}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:16px;
+      margin-bottom:20px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 6px 16px rgba(0,0,0,.08);
+    }
+    .mini{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .icon{
+      width:48px;height:48px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      background:linear-gradient(135deg,#ffe259,#ffa751);
+    }
+    button{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:14px;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-dark{background:#444;color:#fff;margin-top:10px}
+
+    /* sparkle */
+    .sparkle{position:fixed;width:8px;height:8px;background:gold;border-radius:50%;animation:sparkle 1s ease-out forwards;pointer-events:none}
+    @keyframes sparkle{from{transform:scale(1);opacity:1}to{transform:scale(3) translateY(-80px);opacity:0}}
   </style>
 </head>
 <body>
-  <h1>📒 Pencatat Angsuran Hutang</h1>
+  <h1>Summary</h1>
 
-  <div class="card">
-    <p><strong>Nilai Hutang Awal:</strong> Rp500.000</p>
-    <p><strong>Angsuran Harian:</strong> Rp25.000</p>
-    <p id="saldo"></p>
-    <p id="estimasi"></p>
-    <button class="btn-primary" onclick="angsuran()">Bayar Angsuran</button>
-    <button class="btn-dark" onclick="toggleDark()">Dark Mode</button>
+  <!-- Summary Card -->
+  <div class="summary">
+    <div class="sub">Sisa Hutang</div>
+    <div class="saldo" id="saldo"></div>
+    <div class="sub" id="estimasi"></div>
   </div>
 
+  <!-- Action -->
+  <button class="btn-primary" onclick="angsuran()">Bayar Angsuran</button>
+  <button class="btn-dark" onclick="toggleDark()">Dark Mode</button>
+
+  <!-- Top Category Style Grid -->
+  <h2 style="margin-top:24px;font-size:16px">Menu</h2>
+  <div class="grid">
+    <div class="card mini">
+      <div class="icon">📜</div>
+      <div>
+        <strong>Riwayat</strong>
+        <div class="sub">Angsuran</div>
+      </div>
+    </div>
+    <div class="card mini">
+      <div class="icon">📊</div>
+      <div>
+        <strong>Grafik</strong>
+        <div class="sub">Progress</div>
+      </div>
+    </div>
+    <div class="card mini">
+      <div class="icon">💰</div>
+      <div>
+        <strong>Total</strong>
+        <div class="sub">Rp500.000</div>
+      </div>
+    </div>
+    <div class="card mini">
+      <div class="icon">⏳</div>
+      <div>
+        <strong>Status</strong>
+        <div class="sub">Berjalan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Riwayat -->
   <div class="card">
     <h3>📜 Riwayat Angsuran</h3>
     <ul id="riwayat"></ul>
   </div>
 
+  <!-- Grafik -->
   <div class="card">
     <h3>📊 Grafik Angsuran</h3>
     <canvas id="chart"></canvas>
   </div>
-
-  <script>
-    const hutangAwal = 500000;
-    const angsuranHarian = 25000;
-    const mulai = new Date('2026-02-01');
-
-    let data = JSON.parse(localStorage.getItem('angsuran')) || [];
-
-    function saldoSisa() {
-      return hutangAwal - data.length * angsuranHarian;
-    }
-
-    function estimasiLunas() {
-      const sisaHari = Math.ceil(saldoSisa() / angsuranHarian);
-      const tgl = new Date();
-      tgl.setDate(tgl.getDate() + sisaHari);
-      return tgl.toLocaleDateString('id-ID');
-    }
-
-    function updateInfo() {
-      document.getElementById('saldo').innerText = 'Sisa Hutang: Rp' + saldoSisa().toLocaleString('id-ID');
-      document.getElementById('estimasi').innerText = 'Estimasi Lunas: ' + estimasiLunas();
-    }
-
-    function angsuran() {
-      if (saldoSisa() <= 0) return alert('Hutang sudah lunas 🎉');
-      const tgl = new Date();
-      data.push({ tanggal: tgl.toISOString(), jumlah: angsuranHarian });
-      localStorage.setItem('angsuran', JSON.stringify(data));
-      sparkle();
-      renderRiwayat();
-      renderChart();
-      updateInfo();
-    }
-
-    function renderRiwayat() {
-      const ul = document.getElementById('riwayat');
-      ul.innerHTML = '';
-      data.forEach((d, i) => {
-        const li = document.createElement('li');
-        li.innerText = `${i+1}. ${new Date(d.tanggal).toLocaleDateString('id-ID')} - Rp25.000`;
-        ul.appendChild(li);
-      });
-    }
-
-    let chart;
-    function renderChart() {
-      const ctx = document.getElementById('chart');
-      const labels = data.map((_, i) => i+1);
-      const values = data.map((_, i) => hutangAwal - (i+1)*angsuranHarian);
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: { labels, datasets: [{ data: values, fill: false }] },
-        options: { responsive: true }
-      });
-    }
-
-    function sparkle() {
-      for (let i = 0; i < 12; i++) {
-        const s = document.createElement('div');
-        s.className = 'sparkle';
-        s.style.left = Math.random()*window.innerWidth + 'px';
-        s.style.top = Math.random()*window.innerHeight + 'px';
-        document.body.appendChild(s);
-        setTimeout(() => s.remove(), 1000);
-      }
-    }
-
-    function toggleDark() {
-      document.body.classList.toggle('dark');
-    }
-
-    renderRiwayat();
-    renderChart();
-    updateInfo();
-  </script>
 </body>
 </html>
