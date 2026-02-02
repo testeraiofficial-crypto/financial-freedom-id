@@ -3,39 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debt Tracker Pro - Feb 2026</title>
+    <title>Catatan Angsuran Hutang</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
-<body class="dark-mode">
-    <div class="container">
-        <header>
-            <h1>💰 Catatan Hutang</h1>
-            <button id="theme-toggle">🌓 Mode</button>
-        </header>
+<body>
 
-        <section class="summary-card">
-            <p>Sisa Hutang:</p>
-            <h2 id="total-hutang">Rp 300.000</h2>
-            <div id="estimasi-lunas" class="lunas-badge">Estimasi Lunas: --</div>
-        </section>
+<div class="app-container">
 
-        <section class="actions">
-            <button id="btn-bayar" class="btn-main">Bayar Angsuran (Rp 25.000)</button>
-            <button id="btn-reset" class="btn-reset">Reset Data</button>
-        </section>
+    <div class="card summary">
+        <h2>Sisa Hutang</h2>
+        <div id="remainingDebt" class="remaining">Rp 300.000</div>
+        <div id="estimateBadge" class="estimate-badge">Estimasi Lunas</div>
 
-        <section class="chart-container">
-            <h3>Grafik Angsuran</h3>
-            <canvas id="debtChart"></canvas>
-        </section>
+        <button id="payBtn" class="btn-pay">
+            Bayar Angsuran (Rp 25.000)
+        </button>
 
-        <section class="history">
-            <h3>Riwayat Pembayaran</h3>
-            <ul id="history-list"></ul>
-        </section>
+        <button id="resetBtn" class="btn-reset">
+            Reset Data
+        </button>
     </div>
-    <script src="script.js"></script>
+
+    <div class="card chart-card">
+        <h3>Grafik Angsuran</h3>
+        <canvas id="paymentChart"></canvas>
+    </div>
+
+    <div class="card history-card">
+        <h3>Riwayat Angsuran</h3>
+        <ul id="historyList"></ul>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
