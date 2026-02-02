@@ -8,10 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
-<body class="dark-mode"> <div class="container">
+<body class="dark-mode">
+    <div class="container">
         <header>
             <h1>💰 Catatan Hutang</h1>
-            <button id="theme-toggle">🌓 Toggle Mode</button>
+            <button id="theme-toggle">🌓 Mode</button>
         </header>
 
         <section class="summary-card">
@@ -22,6 +23,7 @@
 
         <section class="actions">
             <button id="btn-bayar" class="btn-main">Bayar Angsuran (Rp 25.000)</button>
+            <button id="btn-reset" class="btn-reset">Reset Data</button>
         </section>
 
         <section class="chart-container">
@@ -31,8 +33,7 @@
 
         <section class="history">
             <h3>Riwayat Pembayaran</h3>
-            <ul id="history-list">
-                </ul>
+            <ul id="history-list"></ul>
         </section>
     </div>
     <script src="script.js"></script>
