@@ -1,225 +1,40 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Financial Freedom ID</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-:root{
-  --bg:#f2f6fb;
-  --card:#ffffff;
-  --text:#222;
-  --primary:#2fb3f3;
-}
-body.dark{
-  --bg:#0f172a;
-  --card:#1e293b;
-  --text:#e5e7eb;
-  --primary:#38bdf8;
-}
-
-body{
-  margin:0;
-  font-family:Segoe UI, sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-
-.card{
-  width:360px;
-  margin:40px auto;
-  background:var(--card);
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,.1);
-}
-
-h2{text-align:center;margin:0}
-
-.tabs{
-  display:flex;
-  gap:8px;
-  margin:16px 0;
-}
-.tabs button{
-  flex:1;
-  border:none;
-  padding:8px;
-  border-radius:20px;
-  cursor:pointer;
-  background:#e5eef6;
-}
-.tabs button.active{
-  background:var(--primary);
-  color:white;
-}
-
-.box{
-  background:#eef3f9;
-  padding:12px;
-  border-radius:12px;
-  text-align:center;
-  margin-bottom:10px;
-}
-body.dark .box{background:#334155}
-
-.btn{
-  background:var(--primary);
-  color:white;
-  padding:12px;
-  border:none;
-  width:100%;
-  border-radius:14px;
-  cursor:pointer;
-  font-size:16px;
-  position:relative;
-  overflow:hidden;
-}
-
-.sparkle{
-  position:absolute;
-  width:6px;
-  height:6px;
-  background:white;
-  border-radius:50%;
-  animation:spark 700ms linear;
-}
-@keyframes spark{
-  from{transform:scale(1);opacity:1}
-  to{transform:translateY(-30px) scale(0);opacity:0}
-}
-
-.small{
-  text-align:center;
-  font-size:13px;
-  margin-top:8px;
-  opacity:.8;
-}
-
-.hidden{display:none}
-
-.toggle{
-  text-align:center;
-  cursor:pointer;
-  font-size:13px;
-  opacity:.7;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debt Tracker Pro - Feb 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
+<body class="dark-mode"> <div class="container">
+        <header>
+            <h1>💰 Catatan Hutang</h1>
+            <button id="theme-toggle">🌓 Toggle Mode</button>
+        </header>
 
-<body>
-<div class="card">
-  <h2>Financial Freedom ID</h2>
-  <div class="toggle" onclick="toggleDark()">🌙 Dark Mode</div>
+        <section class="summary-card">
+            <p>Sisa Hutang:</p>
+            <h2 id="total-hutang">Rp 300.000</h2>
+            <div id="estimasi-lunas" class="lunas-badge">Estimasi Lunas: --</div>
+        </section>
 
-  <div class="tabs">
-    <button class="active" onclick="showTab('input')">Input</button>
-    <button onclick="showTab('history')">Riwayat</button>
-    <button onclick="showTab('chart')">Grafik</button>
-  </div>
+        <section class="actions">
+            <button id="btn-bayar" class="btn-main">Bayar Angsuran (Rp 25.000)</button>
+        </section>
 
-  <!-- INPUT -->
-  <div id="input">
-    <div class="box">Total Hutang<br><b id="total"></b></div>
-    <div class="box">Cicilan / Hari<br><b>Rp 25.000</b></div>
-    <button class="btn" onclick="pay()">Bayar Rp25.000 Hari Ini</button>
-    <div class="small">
-      Terbayar: <span id="paid"></span><br>
-      Sisa: <span id="remain"></span><br>
-      Estimasi lunas: <span id="finish"></span>
+        <section class="chart-container">
+            <h3>Grafik Angsuran</h3>
+            <canvas id="debtChart"></canvas>
+        </section>
+
+        <section class="history">
+            <h3>Riwayat Pembayaran</h3>
+            <ul id="history-list">
+                </ul>
+        </section>
     </div>
-  </div>
-
-  <!-- HISTORY -->
-  <div id="history" class="hidden">
-    <ul id="list"></ul>
-  </div>
-
-  <!-- CHART -->
-  <div id="chart" class="hidden">
-    <canvas id="chartCanvas"></canvas>
-  </div>
-
-  <div class="small">Tenang, kamu sedang bergerak ke arah yang benar.</div>
-</div>
-
-<script>
-const HUTANG=500000;
-const ANGSUR=25000;
-const START=new Date("2026-02-01");
-let data=JSON.parse(localStorage.getItem("angsuran"))||[];
-
-const rupiah=n=>"Rp "+n.toLocaleString("id-ID");
-
-function update(){
-  const paid=data.length*ANGSUR;
-  const remain=HUTANG-paid;
-  document.getElementById("total").innerText=rupiah(HUTANG);
-  document.getElementById("paid").innerText=rupiah(paid);
-  document.getElementById("remain").innerText=rupiah(remain);
-
-  const days=Math.ceil(remain/ANGSUR);
-  const finish=new Date(START);
-  finish.setDate(START.getDate()+days);
-  document.getElementById("finish").innerText=finish.toLocaleDateString("id-ID");
-
-  const list=document.getElementById("list");
-  list.innerHTML="";
-  data.forEach((d,i)=>{
-    const li=document.createElement("li");
-    li.textContent=`${i+1}. ${d}`;
-    list.appendChild(li);
-  });
-
-  if(window.chart){
-    chart.data.labels=data.map((_,i)=>i+1);
-    chart.data.datasets[0].data=data.map((_,i)=>(i+1)*ANGSUR);
-    chart.update();
-  }
-}
-
-function pay(){
-  if(data.length*ANGSUR>=HUTANG)return;
-  const today=new Date().toLocaleDateString("id-ID");
-  data.push(today);
-  localStorage.setItem("angsuran",JSON.stringify(data));
-  sparkle();
-  update();
-}
-
-function sparkle(){
-  const btn=document.querySelector(".btn");
-  for(let i=0;i<15;i++){
-    const s=document.createElement("span");
-    s.className="sparkle";
-    s.style.left=Math.random()*100+"%";
-    btn.appendChild(s);
-    setTimeout(()=>s.remove(),700);
-  }
-}
-
-function showTab(tab){
-  document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
-  event.target.classList.add("active");
-  ["input","history","chart"].forEach(id=>{
-    document.getElementById(id).classList.add("hidden");
-  });
-  document.getElementById(tab).classList.remove("hidden");
-}
-
-function toggleDark(){
-  document.body.classList.toggle("dark");
-}
-
-const ctx=document.getElementById("chartCanvas");
-window.chart=new Chart(ctx,{
-  type:"line",
-  data:{labels:[],datasets:[{label:"Total Terbayar",data:[],borderColor:"#38bdf8"}]},
-  options:{responsive:true}
-});
-
-update();
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
