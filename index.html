@@ -1,56 +1,120 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debt Tracker Techno</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+// ================================
+// KONFIGURASI TETAP (FIXED RULES)
+// ================================
+const HUTANG_AWAL = 500000;
+const ANGSURAN_HARIAN = 25000;
+const TANGGAL_MULAI = new Date('2026-02-01');
 
-    <div class="container">
-        <header>
-            <h1>HUTANG TRACKER v1</h1>
-            <button id="themeToggle" class="btn-3d small">🌙 Dark Mode</button>
-        </header>
+// ================================
+// STATE & STORAGE KEY
+// ================================
+const STORAGE_KEY = 'dataAngsuranHutang';
 
-        <div class="status-card">
-            <div class="card-item">
-                <h3>Sisa Hutang</h3>
-                <h1 id="sisaHutang">Rp 300.000</h1>
-            </div>
-            <div class="card-item highlight">
-                <h3>Estimasi Lunas</h3>
-                <h2 id="estimasiLunas">-</h2>
-                <small>Target Mulai: 01 Feb 2026</small>
-            </div>
-        </div>
+let state = {
+  sisaHutang: HUTANG_AWAL,
+  riwayat: [] // { tanggal, nominal, sisa }
+};
 
-        <div class="action-area">
-            <button id="btnBayar" class="btn-3d primary">
-                💸 BAYAR ANGSURAN (25K)
-            </button>
-            <button id="btnReset" class="btn-3d danger">
-                ⚠️ RESET DATA
-            </button>
-        </div>
+// ================================
+// LOAD DATA DARI LOCALSTORAGE
+// ================================
+function loadData() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    state = JSON.parse(saved);
+  }
+}
 
-        <div class="chart-container">
-            <h3>Grafik Progress</h3>
-            <canvas id="debtChart"></canvas>
-        </div>
+// ================================
+// SAVE DATA KE LOCALSTORAGE
+// ================================
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
 
-        <div class="history-container">
-            <h3>Riwayat Pembayaran</h3>
-            <ul id="riwayatList">
-                </ul>
-        </div>
-    </div>
+// ================================
+// FORMAT RUPIAH
+// ================================
+function formatRupiah(angka) {
+  return 'Rp ' + angka.toLocaleString('id-ID');
+}
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="animasi.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+// ================================
+// HITUNG ESTIMASI
+// ================================
+function hitungEstimasi() {
+  const sisaHari = Math.ceil(state.sisaHutang / ANGSURAN_HARIAN);
+  const tanggalLunas = new Date();
+  tanggalLunas.setDate(tanggalLunas.getDate() + sisaHari);
+
+  document.getElementById('sisaHari').textContent = sisaHari;
+  document.getElementById('tanggalLunas').textContent = tanggalLunas.toLocaleDateString('id-ID', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+}
+
+// ================================
+// RENDER INFO SALDO
+// ================================
+function renderSaldo() {
+  document.getElementById('sisaHutang').textContent = formatRupiah(state.sisaHutang);
+  hitungEstimasi();
+}
+
+// ================================
+// PROSES ANGSURAN
+// ================================
+function bayarAngsuran() {
+  if (state.sisaHutang <= 0) {
+    alert('🎉 Hutang sudah lunas!');
+    return;
+  }
+
+  state.sisaHutang -= ANGSURAN_HARIAN;
+  if (state.sisaHutang < 0) state.sisaHutang = 0;
+
+  const today = new Date().toLocaleDateString('id-ID');
+
+  state.riwayat.unshift({
+    tanggal: today,
+    nominal: ANGSURAN_HARIAN,
+    sisa: state.sisaHutang
+  });
+
+  saveData();
+  renderSaldo();
+  renderRiwayat();
+}
+
+// ================================
+// RENDER RIWAYAT (SIMPLE)
+// ================================
+function renderRiwayat() {
+  const list = document.getElementById('riwayatList');
+  list.innerHTML = '';
+
+  state.riwayat.forEach(item => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <strong>${item.tanggal}</strong><br>
+      Angsuran: ${formatRupiah(item.nominal)}<br>
+      Sisa: ${formatRupiah(item.sisa)}
+    `;
+    list.appendChild(li);
+  });
+}
+
+// ================================
+// INIT APP
+// ================================
+function init() {
+  loadData();
+  renderSaldo();
+  renderRiwayat();
+
+  document.getElementById('btnAngsur').addEventListener('click', bayarAngsuran);
+}
+
+init();
