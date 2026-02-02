@@ -41,13 +41,16 @@ body {
 
 .app-container {
   width: 100%;
-  max-width: 420px;
-  padding: 16px;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 24px;
 
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: auto auto;
+  gap: 24px;
 }
+
 
 .card {
   background: var(--card-bg);
