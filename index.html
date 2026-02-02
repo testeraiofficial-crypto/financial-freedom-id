@@ -3,39 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catatan Angsuran Hutang</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Chart.js -->
+    <title>Debt Tracker Techno</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Canvas Confetti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app-container">
-  <div class="card">
-    <div class="remaining"></div>
-    <div class="estimate-badge"></div>
-    <button class="btn-pay"></button>
-    <button class="btn-reset"></button>
-  </div>
-</div>
+    <div class="container">
+        <header>
+            <h1>HUTANG TRACKER v1</h1>
+            <button id="themeToggle" class="btn-3d small">🌙 Dark Mode</button>
+        </header>
 
-    <div class="card chart-card">
-        <h3>Grafik Angsuran</h3>
-        <canvas id="paymentChart"></canvas>
+        <div class="status-card">
+            <div class="card-item">
+                <h3>Sisa Hutang</h3>
+                <h1 id="sisaHutang">Rp 300.000</h1>
+            </div>
+            <div class="card-item highlight">
+                <h3>Estimasi Lunas</h3>
+                <h2 id="estimasiLunas">-</h2>
+                <small>Target Mulai: 01 Feb 2026</small>
+            </div>
+        </div>
+
+        <div class="action-area">
+            <button id="btnBayar" class="btn-3d primary">
+                💸 BAYAR ANGSURAN (25K)
+            </button>
+            <button id="btnReset" class="btn-3d danger">
+                ⚠️ RESET DATA
+            </button>
+        </div>
+
+        <div class="chart-container">
+            <h3>Grafik Progress</h3>
+            <canvas id="debtChart"></canvas>
+        </div>
+
+        <div class="history-container">
+            <h3>Riwayat Pembayaran</h3>
+            <ul id="riwayatList">
+                </ul>
+        </div>
     </div>
 
-    <div class="card history-card">
-        <h3>Riwayat Angsuran</h3>
-        <ul id="historyList"></ul>
-    </div>
-
-</div>
-
-<script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="animasi.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
