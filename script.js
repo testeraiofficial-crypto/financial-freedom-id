@@ -1,7 +1,7 @@
 // CONFIG
-const TOTAL_HUTANG = 300000; // (1) Nilai saldo hutang
-const ANGSURAN = 25000;     // (2) Angsuran tetap
-const START_DATE = new Date('2026-02-16'); // (3) Start 16 Februari 2026
+const TOTAL_HUTANG = 200000; // (1) Saldo hutang diubah jadi 200rb
+const ANGSURAN = 25000;      // (2) Angsuran tetap 25rb
+const START_DATE = new Date('2026-02-23'); // (3) Start 23 Februari 2026
 
 // STATE
 let appData = { terbayar: 0, history: [] };
@@ -94,7 +94,8 @@ function initChart() {
         data: {
             labels: ['Terbayar', 'Sisa'],
             datasets: [{
-                data: [0, 300000],
+                // Ubah angka 300000 di bawah ini menjadi TOTAL_HUTANG agar dinamis
+                data: [0, TOTAL_HUTANG], 
                 backgroundColor: ['#6c5ce7', '#dfe6e9'],
                 borderWidth: 0,
                 hoverOffset: 10
