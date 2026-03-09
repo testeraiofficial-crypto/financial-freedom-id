@@ -1,7 +1,7 @@
 // CONFIG
-const TOTAL_HUTANG = 200000; // (1) Saldo hutang diubah jadi 200rb
-const ANGSURAN = 25000;      // (2) Angsuran tetap 25rb
-const START_DATE = new Date('2026-02-23'); // (3) Start 23 Februari 2026
+const TOTAL_HUTANG = 275000; // (1) Saldo hutang diubah jadi 275rb
+const ANGSURAN = 30000;      // (2) Angsuran tetap 30rb
+const START_DATE = new Date('2026-02-09'); // (3) Start 09 Maret 2026
 
 // STATE
 let appData = { terbayar: 0, history: [] };
